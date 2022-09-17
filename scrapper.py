@@ -81,7 +81,7 @@ def save_datas(i):
         x = 'https://merolagani.com/CompanyDetail.aspx?symbol='
         x += str(i)
         y = scrapper(x).datas()
-        path =  r'/home/icarus/Downloads/Stocks/'
+        path =  r'/home/icarus/Downloads/Stocks/' #location to store file
         path += str(i) +'.csv'
         y.to_csv(path, index = None, header=True)
         print('Datas saved for ' + str(i) + ' in dir ' + str(path))
