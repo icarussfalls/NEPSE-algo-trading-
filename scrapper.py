@@ -26,7 +26,7 @@ class scrapper():
         options.add_argument('--no-sandbox')
         options.add_argument("--disable-dev-shm-usage")
         options.add_argument("start-maximized")
-        self.driver = webdriver.Chrome(options = options, executable_path='/home/icarus/Downloads/chromedriver_linux64 (1)/chromedriver')
+        self.driver = webdriver.Chrome(options = options, executable_path='/home/icarus/Downloads/chromedriver_linux64 (1)/chromedriver') #path to chromedriver
         self.url = url
         self.driver.get(url)
         time.sleep(2)
