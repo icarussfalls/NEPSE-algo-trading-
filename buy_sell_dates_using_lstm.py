@@ -84,7 +84,7 @@ class ML():
 
         for i in range(1, days):
             tomorrow = datetime.now() + timedelta(days=i)
-            if tomorrow.weekday() != 5:
+            if (tomorrow.weekday() != 4 and tomorrow.weekday() != 5) :
                 daterange.append(tomorrow.strftime('%m-%d-%y'))
                 
         daterange_ = pd.to_datetime(daterange)
