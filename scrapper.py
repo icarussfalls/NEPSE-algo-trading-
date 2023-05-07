@@ -5,6 +5,7 @@ from selenium import webdriver
 import os
 from webdriver_manager.chrome import ChromeDriverManager
 import time
+from fake_useragent import UserAgent
 from selenium.webdriver.support.ui import Select
 import numpy as np
 import pandas as pd
@@ -23,10 +24,13 @@ from multiprocessing import Pool
 
 class scrapper():
     def __init__(self, url):
+        ua = UserAgent()
         options.add_argument('--no-sandbox')
         options.add_argument("--disable-dev-shm-usage")
         options.add_argument("start-maximized")
-        self.driver = webdriver.Chrome(options = options, executable_path='/home/icarus/Downloads/chromedriver_linux64 (1)/chromedriver') #path to chromedriver
+        options.add_argument("--headless")
+        options.add_argument(f'user-agent={ua.random}') # add random user agent
+        self.driver = webdriver.Chrome(options = options) #path to chromedriver
         self.url = url
         self.driver.get(url)
         time.sleep(2)
@@ -46,7 +50,10 @@ class scrapper():
         data = pd.DataFrame(columns=['Date', 'LTP', 'Change', 'High', 'Low', 'Open', 'Quantity', 'Turnover'])
         for i in range(len(Date)):
             data = data.append({'Date': Date[i].text, 'LTP': LTP[i].text, 'Change': Change[i].text, 'High': High[i].text, 'Low': Low[i].text, 'Open': Open[i].text, 'Quantity': Quantity[i].text, 'Turnover' : Turnover[i].text}, ignore_index = True)
+        # sort the data by date in ascending order
+        data = data.sort_values('Date', ascending=True)
         return data
+
         
     
     def datas(self):
@@ -54,11 +61,7 @@ class scrapper():
         data = []
         data.append(self.df())
         time.sleep(1)
-        text = self.driver.find_element("xpath", '//*[@id="ctl00_ContentPlaceHolder1_CompanyDetail1_PagerControlTransactionHistory1_litRecords"]').text
-        u = text[-3:-1]
-        u = float(u)
-        u = int(u)
-        for i in range(u):
+        while True:
             try:                
                 k = self.driver.find_element("xpath", '//*[@title = "Next Page"]')
                 actions = ActionChains(self.driver)
@@ -72,19 +75,17 @@ class scrapper():
         return data
 
 
-input_string = input("Enter stocks seperated by space: ")
-stock = input_string.split(" ")
+stock = ['NTC', 'NABIL']
 
 
-	
 def save_datas(i):
-        x = 'https://merolagani.com/CompanyDetail.aspx?symbol='
-        x += str(i)
-        y = scrapper(x).datas()
-        path =  r'/home/icarus/Downloads/Stocks/' #location to store file
-        path += str(i) +'.csv'
-        y.to_csv(path, index = None, header=True)
-        print('Datas saved for ' + str(i) + ' in dir ' + str(path))
+    x = 'https://merolagani.com/CompanyDetail.aspx?symbol='
+    x += str(i)
+    y = scrapper(x).datas()
+    filename = f"{i}.csv"
+    path = os.path.join(os.getcwd(), filename)
+    y.to_csv(path, index=None, header=True)
+    print(f"Data saved for {i} in {path}")
 
 
 
@@ -94,8 +95,5 @@ if __name__ == '__main__':
         with Pool() as pool:
             pool.map(save_datas, stock)
 # call the same function with different data sequentially
-
-
-
 
 
