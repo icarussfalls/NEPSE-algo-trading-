@@ -51,7 +51,8 @@ class scrapper():
         for i in range(len(Date)):
             data = data.append({'Date': Date[i].text, 'LTP': LTP[i].text, 'Change': Change[i].text, 'High': High[i].text, 'Low': Low[i].text, 'Open': Open[i].text, 'Quantity': Quantity[i].text, 'Turnover' : Turnover[i].text}, ignore_index = True)
         # sort the data by date in ascending order
-        data = data.sort_values('Date', ascending=True)
+        #data['Date'] = pd.to_datetime(data['Date'], format='%Y/%m/%d')
+        #data = data.sort_values(by='Date', ascending=True).reset_index(drop=True)
         return data
 
         
@@ -95,5 +96,3 @@ if __name__ == '__main__':
         with Pool() as pool:
             pool.map(save_datas, stock)
 # call the same function with different data sequentially
-
-
